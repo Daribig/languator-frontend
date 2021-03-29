@@ -140,6 +140,9 @@ class BasicWorkspace extends React.Component<IWorkspaceProps, IWorkspaceState> i
         }
         else if(this.state.selectedTab == Tab.Solution){
             if(!this.state.isRenderedSolutionTab){
+                if(!this.state.isClaimedPointForThisProblem){
+                    HelperMethods.NotifyUser("You will not be able to claim a point for this problem :(", 1);
+                }
                 this.setState({
                     isRenderedSolutionTab : true
                 });
