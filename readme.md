@@ -1,7 +1,8 @@
 Languator Frontend
 
-UI Design: https://www.figma.com/file/OF0Ebry4P4xUv7AT54lotf/Languator?node-id=0%3A1
-Visual Design Sandbox: https://lucid.app/lucidchart/711c88a1-fe1a-49ca-9235-c1f95f96eb09/edit?beaconFlowId=60187D6EAB47D01C&page=0_0#
+- UI Design: https://www.figma.com/file/OF0Ebry4P4xUv7AT54lotf/Languator?node-id=0%3A1
+- Visual Design Sandbox: https://lucid.app/lucidchart/711c88a1-fe1a-49ca-9235-c1f95f96eb09/edit?beaconFlowId=60187D6EAB47D01C&page=0_0#
+- (Hub) Design Document: https://docs.google.com/document/d/1eob4KJWfJ8tiHT5_FGrDOypSCnBMrM40aLD9ENr_tu4/edit
 
 Todo:
 - solution tab
