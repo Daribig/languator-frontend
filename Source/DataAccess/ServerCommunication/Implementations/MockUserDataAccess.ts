@@ -6,20 +6,25 @@ class MockUserDataAccess implements IUserDataAccess{
 
     private _methodToCallOnUserCountUpdate : (userCount : number) => void;
     private _methodToCallOnLeaderBoardUpdate : (records : Array<LeaderBoardRecord>) => void;
+    private _methodToCallOnUserScoreUpdate : (userScore : number) => void;
     private _countLiveUsers : number;
     private _userID : string;
-    private _score : number;
+    private _leaderboardRecords : Array<LeaderBoardRecord>;
 
 
     // TODO: perhaps the function references shouldn't be passed into here, instead the client calls functions to establish the calls back
     // hmm, that would be cleaner as the interface would then specify these functions - so implementations of the interface
     // would have a better idea of what service it needs to provide to the client (establishing callbacks is important)
-    public constructor(methodToCallOnUserCountUpdate : (userCount : number) => void, methodToCallOnLeaderBoardUpdate : (records : Array<LeaderBoardRecord>) => void){
+    public constructor(methodToCallOnUserCountUpdate : (userCount : number) => void, methodToCallOnLeaderBoardUpdate : (records : Array<LeaderBoardRecord>) => void, methodToCallOnUserScoreUpdate : (userScore : number) => void){
         this._methodToCallOnUserCountUpdate = methodToCallOnUserCountUpdate;
         this._methodToCallOnLeaderBoardUpdate = methodToCallOnLeaderBoardUpdate;
+        this._methodToCallOnUserScoreUpdate = methodToCallOnUserScoreUpdate;
         this._userID = HelperMethods.GenerateRandomId(4);
         this._countLiveUsers = 4;
-        this._score = 0;
+        this._leaderboardRecords = new Array<LeaderBoardRecord>();
+        let currentUserRecord : LeaderBoardRecord = new LeaderBoardRecord(this._userID, 0);
+        this._leaderboardRecords.push(currentUserRecord);
+        HelperMethods.AddRecordsToLeaderBoardRecords(this._leaderboardRecords, this._countLiveUsers - 1);
         this.setupIntervals();
     }
 
@@ -27,24 +32,9 @@ class MockUserDataAccess implements IUserDataAccess{
         setInterval( () => {
             this._countLiveUsers ++;
             this._methodToCallOnUserCountUpdate(this._countLiveUsers);
-            this._methodToCallOnLeaderBoardUpdate(this.generateLeaderBoardRecords())
+            HelperMethods.AddRecordsToLeaderBoardRecords(this._leaderboardRecords, 1);
+            this._methodToCallOnLeaderBoardUpdate(HelperMethods.CloneLeaderBoardRecords(this._leaderboardRecords))
         }, 5000);
-    }
-
-    // records generated == this._countLiveUsers
-    private generateLeaderBoardRecords() : Array<LeaderBoardRecord>{
-        let records : Array<LeaderBoardRecord> = new Array<LeaderBoardRecord>();
-        for(let i = 0; i < this._countLiveUsers; i++){
-            let record : LeaderBoardRecord;
-            if(i == 0){
-                record = new LeaderBoardRecord(this._userID, this._score);
-            }
-            else{
-                record = new LeaderBoardRecord(HelperMethods.GenerateRandomId(4), i % 2 == 0 ? 4 : 2);
-            }
-            records.push(record);
-        }
-        return records;
     }
 
     public getLiveUserCount() : number{
@@ -54,16 +44,18 @@ class MockUserDataAccess implements IUserDataAccess{
         return this._userID;
     }
     public getScore() : number{
-        return this._score;
+        return this._leaderboardRecords[0].getScore();
     }
 
     public getLeaderBoardRecords() : Array<LeaderBoardRecord>{
-        let records : Array<LeaderBoardRecord> = this.generateLeaderBoardRecords();
-        return records;
+        return HelperMethods.CloneLeaderBoardRecords(this._leaderboardRecords);
     }
 
     public incrementScore() : void{
-        this._score ++;
+        // when the user's score updates, we need to update hte client's user score and leaderboard records
+        this._methodToCallOnUserScoreUpdate(this._leaderboardRecords[0].getScore() + 1);
+        this._leaderboardRecords[0].setScore(this._leaderboardRecords[0].getScore() + 1);
+        this._methodToCallOnLeaderBoardUpdate(HelperMethods.CloneLeaderBoardRecords(this._leaderboardRecords));
     }
 }
 

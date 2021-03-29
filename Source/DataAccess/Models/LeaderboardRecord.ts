@@ -14,6 +14,10 @@ class LeaderBoardRecord{
     public getScore() : number{
         return this._score;
     }
+
+    public setScore(score : number) : void{
+        this._score = score;
+    }
 }
 
 export default LeaderBoardRecord;

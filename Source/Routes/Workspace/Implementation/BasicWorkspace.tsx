@@ -6,8 +6,12 @@ import MockProblemDataAccess from '../../../DataAccess/ServerCommunication/Imple
 import MockUserDataAccess from '../../../DataAccess/ServerCommunication/Implementations/MockUserDataAccess';
 import IProblemDataAccess from '../../../DataAccess/ServerCommunication/Interfaces/IProblemDataAccess';
 import IUserDataAccess from '../../../DataAccess/ServerCommunication/Interfaces/IUserDataAccess';
+import HelperMethods from '../../../Setup/HelperMethods';
+import { AttemptTab } from '../../../StatelessComponents/AttemptTab';
 import { BottomBanner } from '../../../StatelessComponents/BottomBanner';
+import { LeaderboardTab } from '../../../StatelessComponents/LeaderboardTab';
 import { ProblemTab } from '../../../StatelessComponents/ProblemTab';
+import { SolutionTab } from '../../../StatelessComponents/SolutionTab';
 import { TabColumn} from '../../../StatelessComponents/TabColumn';
 import { TopBanner } from '../../../StatelessComponents/TopBanner';
 import { UserInputColumn } from '../../../StatelessComponents/UserInputColumn';
@@ -19,6 +23,7 @@ class BasicWorkspace extends React.Component<IWorkspaceProps, IWorkspaceState> i
     
     private _userCountUpdateHandler : (userCount : number) => void;
     private _leaderboardRecordsUpdateHandler : (records : Array<LeaderBoardRecord>) => void;
+    private _userScoreUpdateHandler : (userScore : number) => void;
     private _onClickGetNewProblemButtonHandler : () => void;
     private _onClickSubmitButtonHandler : () => void;
     private _onChangeTextInputHandler : (event : React.ChangeEvent<HTMLTextAreaElement>) => void;
@@ -30,11 +35,12 @@ class BasicWorkspace extends React.Component<IWorkspaceProps, IWorkspaceState> i
         super(props);
         this._userCountUpdateHandler = this.userCountUpdateHandler.bind(this);
         this._leaderboardRecordsUpdateHandler = this.leaderboardRecordsUpdateHandler.bind(this);
+        this._userScoreUpdateHandler = this.userScoreUpdateHandler.bind(this);
         this._onClickGetNewProblemButtonHandler = this.onClickGetNewProblemButtonHandler.bind(this);
         this._onClickSubmitButtonHandler = this.onClickSubmitButtonHandler.bind(this);
         this._onChangeTextInputHandler = this.onChangeTextInputHandler.bind(this);
         this._onClickOnTabHandler = this.onClickOnTabHandler.bind(this);
-        this._userDataAccess = new MockUserDataAccess(this._userCountUpdateHandler, this._leaderboardRecordsUpdateHandler);
+        this._userDataAccess = new MockUserDataAccess(this._userCountUpdateHandler, this._leaderboardRecordsUpdateHandler, this._userScoreUpdateHandler);
         this._problemDataAccess = new MockProblemDataAccess();
 
         let liveUserCount : number = this._userDataAccess.getLiveUserCount();
@@ -50,7 +56,9 @@ class BasicWorkspace extends React.Component<IWorkspaceProps, IWorkspaceState> i
             userID : userID,
             problem : problem,
             userInput : "",
-            selectedTab : Tab.Problem
+            selectedTab : Tab.Problem,
+            isRenderedSolutionTab : false,
+            isClaimedPointForThisProblem : false
         };
 
     }
@@ -67,12 +75,45 @@ class BasicWorkspace extends React.Component<IWorkspaceProps, IWorkspaceState> i
         });
     }
 
-    private onClickGetNewProblemButtonHandler() : void{
-        console.log("get new problem!");
+    private userScoreUpdateHandler(userScore : number) : void{
+        this.setState({
+            score: userScore
+        })
+    }
+
+    private onClickGetNewProblemButtonHandler(language : string) : void{
+        let newProblem : Problem = this._problemDataAccess.getNewProblem(language);
+        this.setState({
+            problem : newProblem,
+            userInput : "",
+            isRenderedSolutionTab : false,
+            isClaimedPointForThisProblem : false,
+            selectedTab : Tab.Problem
+        });
     }
 
     private onClickSubmitButtonHandler() : void{
-        console.log("submit problem!");
+        let isCorrectInput : boolean = this.state.userInput == this.state.problem.getSolution();
+        let isRenderedSolutionTab = this.state.isRenderedSolutionTab;
+        let isAlreadyClaimedPointForThisProblem = this.state.isClaimedPointForThisProblem;
+        if(isCorrectInput && !isRenderedSolutionTab && !isAlreadyClaimedPointForThisProblem){
+            HelperMethods.NotifyUser("Submission accepted!!", 1);
+            this._userDataAccess.incrementScore();
+            this.setState({
+                isClaimedPointForThisProblem : true
+            });
+        }
+        else{
+            if(isAlreadyClaimedPointForThisProblem){
+                HelperMethods.NotifyUser("You've already claimed the point for this question!", 1);
+            }
+            else if(isRenderedSolutionTab){
+                HelperMethods.NotifyUser("You've looked at the solution, so can't claim a point for this problem.", 1);
+            }
+            else if(!isCorrectInput){
+                HelperMethods.NotifyUser("Wrong Answer", 1);
+            }
+        }
     }
 
     private onChangeTextInputHandler(event : React.ChangeEvent<HTMLTextAreaElement>) : void{
@@ -93,25 +134,23 @@ class BasicWorkspace extends React.Component<IWorkspaceProps, IWorkspaceState> i
 
     public render() : JSX.Element{
 
-        let rows : Array<JSX.Element> = new Array<JSX.Element>();
-        for(let i = 0; i < this.state.leaderBoardRecords.length; i++){
-            let row : JSX.Element = <div>{this.state.leaderBoardRecords[i].getUserID()} - {i == 0 ? this.state.score : this.state.leaderBoardRecords[i].getScore()}</div>
-            rows.push(row);
-        }
-
         let selectedTab : JSX.Element;
         if(this.state.selectedTab == Tab.Problem){
             selectedTab = <ProblemTab languageToTranslateFrom={this.state.problem.getLanguage()} textToTranslate={this.state.problem.getTextToTranslate()}/>
         }
         else if(this.state.selectedTab == Tab.Solution){
-            // todo
+            if(!this.state.isRenderedSolutionTab){
+                this.setState({
+                    isRenderedSolutionTab : true
+                });
+            }
+            selectedTab = <SolutionTab solution={this.state.problem.getSolution()} />
         }
         else if(this.state.selectedTab == Tab.Leaderboard){
-            // todo
+            selectedTab = <LeaderboardTab records={this.state.leaderBoardRecords} currentUserID={this.state.userID} currentUserScore={this.state.score} />
         }
         else{
-            // attempt tab
-            // todo
+            selectedTab = <AttemptTab text={this.state.userInput} methodToCallOnChangeText={this._onChangeTextInputHandler}/>
         }
 
         return(   

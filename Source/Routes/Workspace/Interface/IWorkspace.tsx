@@ -22,6 +22,8 @@ interface IWorkspaceState{
     problem : Problem;
     userInput : string;
     selectedTab : Tab;
+    isRenderedSolutionTab : boolean;
+    isClaimedPointForThisProblem : boolean;
 }
 
 export {IWorkspace, IWorkspaceState, IWorkspaceProps};

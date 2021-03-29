@@ -161,12 +161,13 @@
     border: 1px solid black;
     border-top: none;
     height: calc(100vh - 200px - 25px);
+    overflow: scroll;
     background-color: white ;
 }
 
 /* ------------------------------- */
 
-/* ---------- PROBLEM CONTENT ---------- */
+/* ---------- PROBLEM TAB ---------- */
 
 #basic-workspace > #main-body > #tab-column > #tab-content > #problem-tab{
     width: 100%;
@@ -182,6 +183,38 @@
     border-radius: 5px;
     text-align: center;
     border: 1px solid black;
+}
+
+/* ------------------------------- */
+
+/* ---------- SOLUTION TAB ---------- */
+
+#basic-workspace > #main-body > #tab-column > #tab-content > #solution-tab{
+    width: 100%;
+}
+
+#basic-workspace > #main-body > #tab-column > #tab-content > #solution-tab > #solution{
+    margin: 20px;
+    padding: 20px;
+    border-radius: 5px;
+    text-align: center;
+    border: 1px solid black;
+}
+
+/* ------------------------------- */
+
+/* ---------- ATTEMPT TAB ---------- */
+
+#basic-workspace > #main-body > #tab-column > #tab-content > #attempt-tab{
+    width: 100%;
+}
+
+#basic-workspace > #main-body > #tab-column > #tab-content > #attempt-tab > #attempt-tab-text-area{
+    width: 80%;
+    margin-left: 10%;
+    margin-right: 10%;
+    height: 500px;
+    resize: none;
 }
 
 /* ------------------------------- */
