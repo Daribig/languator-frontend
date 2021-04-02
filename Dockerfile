@@ -16,11 +16,9 @@ EXPOSE 8080
 # setup a development file-server)
 RUN npm run prod-build
 # 'CMD' == the sign-off command that'll be called on when we instantiate docker containers from 
-# the docker image created by 'this' Dockerfile - everythin before this command is run when 
+# the docker image created by 'this' Dockerfile - everything before this command is run when 
 # creating the image, 'this' command is the only thing called on when creating a container from 
-# the image - eg, we don't copy directory - eg, we don't run 'npm install' again when creating a 
-# container from an image, we run that when creating an image from a Dockerfile - do the OS 
-# project on (file system) images to better understand this.
-# NOTE: this command takes between 15-25 seconds to run, as it's performing bundling and then
-# setting up a file-server to serve the bundled files
+# the image - eg, we don't run 'npm install' again when creating a container from an image, we 
+# run that when creating an image from a Dockerfile
+# TODO: do the OSTEP  project on (file system) images to better understand stuff like this.
 CMD ["npm", "run", "serve-prod"]
