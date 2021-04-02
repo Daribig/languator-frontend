@@ -4,7 +4,8 @@ dev-build/
 prod-build/
 .DS_Store
 .vscode/
-package-lock.json
 .dockerignore
+.git
+.env
 Dockerfile
 Dockerfile.prod
