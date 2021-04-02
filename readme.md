@@ -22,6 +22,6 @@ Todo (didn't start a todo from the beginning, so the todos aren't from nothing t
 
 How i use this project's Dockerfile to build an image, and then use the image to instantiate a Docker Container:
 - "docker build -t languator-frontend-v1 ." - build a docker image using the Dockerfile in the current directory ("." == current directory), and name the docker image "languator-frontend-v1"
-- "docker run -d -p 3000:8080 languator-frontend-v1" - instantiates a docker container from the docker image "languator-frontend-v1" - the docker container runs in the background (detached mode) - maps the host machine's port 3000 to the docker container's port 8080. Note: port 8080 is the port that the 'serve' file-server process 'listens' on. Note: if you want to instantiate multiple containers, then you can but you need to make the host port they listen on be different - eg, the following two commands would setup 2 containers that are instantiated from the same image:
-    - docker run -d -p 3000:8080 languator-frontend-v1
-    - docker run -d -p 3001:8080 languator-frontend-v1
+- "docker run -d -p 3000:8080 languator-frontend-v1" - instantiates a docker container from the docker image "languator-frontend-v1" - the docker container runs in the background (detached mode) - maps the host machine's port 3000 to the docker container's port 8080. Note: port 8080 is the port that the 'serve' file-server process 'listens' on. Note: if you want to instantiate multiple containers from the same image, then you can but you need to make the host's ports that they listen on be different - eg, the following two commands would setup 2 containers that are instantiated from the same image:
+    - "docker run -d -p 3000:8080 languator-frontend-v1"
+    - "docker run -d -p 3001:8080 languator-frontend-v1"
