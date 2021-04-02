@@ -2,7 +2,7 @@ Languator Frontend
 
 - Design Document: https://docs.google.com/document/d/1eob4KJWfJ8tiHT5_FGrDOypSCnBMrM40aLD9ENr_tu4/edit?usp=sharing
 
-Todo (didn't start a todo from the beginning, so the todos aren't from nothing to something):
+Todo (didn't start todo from the beginning, so the todos aren't from nothing to something):
 - [x] solution tab
 - [x] leaderboard tab
 - [x] attempt tab
