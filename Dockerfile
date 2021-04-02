@@ -5,11 +5,15 @@ FROM node:13.12.0-alpine
 # set the directroy within the container's file system that all other commands in this docker 
 # file should, by default, run relative to
 WORKDIR /app
-# copy everything in current directory to the "/app/" directory.
+# copy everything in the host's same-directory-as-'this'-dockerfile directory to the 
+# "/app/" directory within the docker image's filesystem.
 COPY . .
 # install node modules into this image's filesystem at the "/app/" directory
 RUN npm install
-# lets a host port map to the docker container's port 3000
+# when a docker container is instantiated from 'this' image, it will have its
+# process running on port 8080 exposed to the host machine (machine that instantiates
+# docker container) as well as other containers running on the same docker-network (if 
+# it's setup)
 EXPOSE 8080
 # bundle the files with no sourcemaps and don't setup a development file server (that has 
 # hot-reload) (the 'dev-build' npm command will bundle the files with source maps and 
